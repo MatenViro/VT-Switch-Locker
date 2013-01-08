@@ -3,6 +3,12 @@
 import sys, os, time, atexit, signal
 import subprocess, copy, re, os.path
 
+
+# Number of a terminal to that we need refer all switching tries
+# By default that's tty1, but it can be changed to any other
+LOCK_IN_TERMINAL = 1
+
+
 class Daemon(object):
     """A generic daemon class.
     Usage: subclass the daemon class and override the run() method."""
@@ -128,7 +134,7 @@ class XLocker(Daemon):
         self.Xscreensaver = subprocess.Popen(['xscreensaver'])
         self.Xscreencmd = subprocess.Popen(['xscreensaver-command', '-watch'], stdout=subprocess.PIPE)
         self.OriginMap = self.scan_fkeys()[1]
-        self.LockMap = [i[:2] + self.OriginMap[6][2:] for i in self.OriginMap]
+        self.LockMap = [i[:2] + self.OriginMap[LOCK_IN_TERMINAL-1][2:] for i in self.OriginMap]
 
         ret = super(XLocker, self).start()
         if not ret:
